@@ -1,7 +1,39 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
+// Node 타입 정의
+interface NodeType {
+  row: number;
+  col: number;
+  isStart: boolean;
+  isEnd: boolean;
+  distance: number;
+  isVisited: boolean;
+  isWall: boolean;
+  isPath: boolean;
+  previousNode: [number, number] | null;
+  fScore: number;
+  gScore: number;
+  hScore: number;
+}
+
+// 그리드 노드 컴포넌트 Props 타입 정의
+interface NodeProps {
+  row: number;
+  col: number;
+  isStart: boolean;
+  isEnd: boolean;
+  isWall: boolean;
+  isVisited: boolean;
+  isPath: boolean;
+  onMouseDown: (row: number, col: number) => void;
+  onMouseEnter: (row: number, col: number) => void;
+  onMouseUp: () => void;
+}
+
 // 그리드 노드 컴포넌트
-const Node = ({ row, col, isStart, isEnd, isWall, isVisited, isPath, onMouseDown, onMouseEnter, onMouseUp }) => {
+const Node: React.FC<NodeProps> = ({ 
+  row, col, isStart, isEnd, isWall, isVisited, isPath, onMouseDown, onMouseEnter, onMouseUp 
+}) => {
   const extraClassName = isStart
     ? 'bg-green-500'
     : isEnd
@@ -24,8 +56,8 @@ const Node = ({ row, col, isStart, isEnd, isWall, isVisited, isPath, onMouseDown
   );
 };
 
-const AStarPathfinding = () => {
-  const [grid, setGrid] = useState([]);
+const AStarPathfinding: React.FC = () => {
+  const [grid, setGrid] = useState<NodeType[][]>([]);
   const [startNode, setStartNode] = useState({ row: 5, col: 5 });
   const [endNode, setEndNode] = useState({ row: 15, col: 35 });
   const [mouseIsPressed, setMouseIsPressed] = useState(false);
@@ -37,21 +69,8 @@ const AStarPathfinding = () => {
   const ROWS = 20;
   const COLS = 40;
 
-  // 빈 그리드 초기화 함수
-  const initializeGrid = useCallback(() => {
-    const newGrid = [];
-    for (let row = 0; row < ROWS; row++) {
-      const currentRow = [];
-      for (let col = 0; col < COLS; col++) {
-        currentRow.push(createNode(row, col));
-      }
-      newGrid.push(currentRow);
-    }
-    return newGrid;
-  }, []);
-
   // 노드 생성 함수
-  const createNode = (row, col) => {
+  const createNode = (row: number, col: number): NodeType => {
     return {
       row,
       col,
@@ -68,6 +87,19 @@ const AStarPathfinding = () => {
     };
   };
 
+  // 빈 그리드 초기화 함수
+  const initializeGrid = useCallback(() => {
+    const newGrid: NodeType[][] = [];
+    for (let row = 0; row < ROWS; row++) {
+      const currentRow: NodeType[] = [];
+      for (let col = 0; col < COLS; col++) {
+        currentRow.push(createNode(row, col));
+      }
+      newGrid.push(currentRow);
+    }
+    return newGrid;
+  }, [startNode.row, startNode.col, endNode.row, endNode.col]);
+
   // 컴포넌트 마운트 시 그리드 초기화
   useEffect(() => {
     const initialGrid = initializeGrid();
@@ -75,14 +107,14 @@ const AStarPathfinding = () => {
   }, [initializeGrid]);
 
   // 그리드 초기화 버튼 핸들러
-  const resetGrid = () => {
+  const resetGrid = (): void => {
     setIsRunning(false);
     setPathFound(false);
     setGrid(initializeGrid());
   };
 
   // 방문 노드 초기화 버튼 핸들러
-  const clearVisitedNodes = () => {
+  const clearVisitedNodes = (): void => {
     setIsRunning(false);
     setPathFound(false);
     setGrid(grid => {
@@ -108,7 +140,7 @@ const AStarPathfinding = () => {
   };
 
   // 마우스 다운 핸들러
-  const handleMouseDown = (row, col) => {
+  const handleMouseDown = (row: number, col: number): void => {
     if (isRunning) return;
     setMouseIsPressed(true);
     
@@ -127,7 +159,7 @@ const AStarPathfinding = () => {
   };
 
   // 마우스 엔터 핸들러
-  const handleMouseEnter = (row, col) => {
+  const handleMouseEnter = (row: number, col: number): void => {
     if (!mouseIsPressed || isRunning) return;
     
     if (currentMode === 'wall') {
@@ -137,12 +169,12 @@ const AStarPathfinding = () => {
   };
 
   // 마우스 업 핸들러
-  const handleMouseUp = () => {
+  const handleMouseUp = (): void => {
     setMouseIsPressed(false);
   };
 
   // 벽 토글 함수
-  const toggleWall = (grid, row, col) => {
+  const toggleWall = (grid: NodeType[][], row: number, col: number): NodeType[][] => {
     const newGrid = grid.slice();
     const node = newGrid[row][col];
     if (!node.isStart && !node.isEnd) {
@@ -156,7 +188,7 @@ const AStarPathfinding = () => {
   };
 
   // 시작 노드 설정 함수
-  const setNewStartNode = (grid, row, col, oldStartNode) => {
+  const setNewStartNode = (grid: NodeType[][], row: number, col: number, oldStartNode: {row: number, col: number}): NodeType[][] => {
     const newGrid = grid.slice();
     // 이전 시작 노드 초기화
     newGrid[oldStartNode.row][oldStartNode.col] = {
@@ -174,7 +206,7 @@ const AStarPathfinding = () => {
   };
 
   // 끝 노드 설정 함수
-  const setNewEndNode = (grid, row, col, oldEndNode) => {
+  const setNewEndNode = (grid: NodeType[][], row: number, col: number, oldEndNode: {row: number, col: number}): NodeType[][] => {
     const newGrid = grid.slice();
     // 이전 끝 노드 초기화
     newGrid[oldEndNode.row][oldEndNode.col] = {
@@ -192,12 +224,12 @@ const AStarPathfinding = () => {
   };
 
   // 맨해튼 거리 계산 함수 (휴리스틱)
-  const manhattanDistance = (row1, col1, row2, col2) => {
+  const manhattanDistance = (row1: number, col1: number, row2: number, col2: number): number => {
     return Math.abs(row1 - row2) + Math.abs(col1 - col2);
   };
 
   // A* 알고리즘 실행 함수
-  const visualizeAStar = () => {
+  const visualizeAStar = (): void => {
     if (isRunning) return;
     clearVisitedNodes();
     setIsRunning(true);
@@ -208,9 +240,9 @@ const AStarPathfinding = () => {
     const endRow = endNode.row;
     const endCol = endNode.col;
     
-    const openSet = [];
-    const closedSet = [];
-    const visitedNodesInOrder = [];
+    const openSet: [number, number][] = [];
+    const closedSet: [number, number][] = [];
+    const visitedNodesInOrder: [number, number][] = [];
     
     // 그리드 초기화 및 시작 노드 설정
     const newGrid = grid.slice();
@@ -321,7 +353,7 @@ const AStarPathfinding = () => {
     }
     
     // 최단 경로 애니메이션 함수
-    function animateShortestPath(nodesInShortestPathOrder) {
+    function animateShortestPath(nodesInShortestPathOrder: [number, number][]) {
       for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
         setTimeout(() => {
           const [row, col] = nodesInShortestPathOrder[i];
@@ -344,8 +376,8 @@ const AStarPathfinding = () => {
   };
 
   // 최단 경로 노드 순서 가져오기 함수
-  const getNodesInShortestPathOrder = (endNode) => {
-    const nodesInShortestPathOrder = [];
+  const getNodesInShortestPathOrder = (endNode: NodeType): [number, number][] => {
+    const nodesInShortestPathOrder: [number, number][] = [];
     let currentNode = endNode;
     
     while (currentNode.previousNode) {
@@ -358,8 +390,8 @@ const AStarPathfinding = () => {
   };
 
   // 이웃 노드 가져오기 함수
-  const getNeighbors = (grid, row, col) => {
-    const neighbors = [];
+  const getNeighbors = (grid: NodeType[][], row: number, col: number): [number, number][] => {
+    const neighbors: [number, number][] = [];
     if (row > 0) neighbors.push([row - 1, col]); // 위
     if (row < ROWS - 1) neighbors.push([row + 1, col]); // 아래
     if (col > 0) neighbors.push([row, col - 1]); // 왼쪽
@@ -368,12 +400,12 @@ const AStarPathfinding = () => {
   };
 
   // openSet에 노드가 있는지 확인하는 함수
-  const openSetIncludes = (openSet, row, col) => {
+  const openSetIncludes = (openSet: [number, number][], row: number, col: number): boolean => {
     return openSet.some(([r, c]) => r === row && c === col);
   };
 
   // closedSet에 노드가 있는지 확인하는 함수
-  const closedSetIncludes = (closedSet, row, col) => {
+  const closedSetIncludes = (closedSet: [number, number][], row: number, col: number): boolean => {
     return closedSet.some(([r, c]) => r === row && c === col);
   };
 
