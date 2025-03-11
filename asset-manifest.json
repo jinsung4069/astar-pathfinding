@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/astar-pathfinding/static/css/main.38dca85e.css",
-    "main.js": "/astar-pathfinding/static/js/main.014cab8c.js",
+    "main.css": "/astar-pathfinding/static/css/main.879b0f81.css",
+    "main.js": "/astar-pathfinding/static/js/main.0a9d4dc2.js",
     "static/js/453.2611c89d.chunk.js": "/astar-pathfinding/static/js/453.2611c89d.chunk.js",
     "index.html": "/astar-pathfinding/index.html",
-    "main.38dca85e.css.map": "/astar-pathfinding/static/css/main.38dca85e.css.map",
-    "main.014cab8c.js.map": "/astar-pathfinding/static/js/main.014cab8c.js.map",
+    "main.879b0f81.css.map": "/astar-pathfinding/static/css/main.879b0f81.css.map",
+    "main.0a9d4dc2.js.map": "/astar-pathfinding/static/js/main.0a9d4dc2.js.map",
     "453.2611c89d.chunk.js.map": "/astar-pathfinding/static/js/453.2611c89d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.38dca85e.css",
-    "static/js/main.014cab8c.js"
+    "static/css/main.879b0f81.css",
+    "static/js/main.0a9d4dc2.js"
   ]
 }
