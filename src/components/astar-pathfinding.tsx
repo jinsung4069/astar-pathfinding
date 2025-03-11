@@ -522,21 +522,21 @@ const AStarPathfinding: React.FC = () => {
         </div>
       )}
 
-      <div className="mt-6 p-4 bg-white rounded shadow">
+      <div className="mt-6 p-4 bg-white rounded shadow text-left">
         <h2 className="text-xl font-semibold mb-2">A* 알고리즘 설명</h2>
-        <p className="mb-2">
+        <p className="mb-2 text-left">
           A* 알고리즘은 그래프 탐색 알고리즘으로, 시작 노드에서 목표 노드까지의 최단 경로를 찾기 위해 사용됩니다.
           다익스트라 알고리즘의 확장으로, 휴리스틱 함수를 사용하여 탐색 방향을 목표 쪽으로 유도합니다.
         </p>
-        <p className="mb-2">
+        <p className="mb-2 text-left">
           A* 알고리즘은 다음 수식을 사용합니다: <strong>f(n) = g(n) + h(n)</strong>
         </p>
-        <ul className="list-disc pl-5 mb-2">
+        <ul className="list-disc pl-5 mb-2 text-left">
           <li><strong>f(n)</strong>: 노드의 총 비용</li>
           <li><strong>g(n)</strong>: 시작 노드에서 현재 노드까지의 실제 비용</li>
           <li><strong>h(n)</strong>: 현재 노드에서 목표 노드까지의 추정 비용 (휴리스틱)</li>
         </ul>
-        <p>
+        <p className="text-left">
           이 시뮬레이션에서는 맨해튼 거리(Manhattan distance)를 휴리스틱으로 사용합니다. 맨해튼 거리는 
           두 점 사이의 수평 및 수직 이동 거리의 합으로, 그리드 기반 경로 탐색에 적합합니다.
         </p>
